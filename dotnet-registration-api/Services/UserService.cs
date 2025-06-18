@@ -2,6 +2,7 @@
 using dotnet_registration_api.Data.Models;
 using dotnet_registration_api.Data.Repositories;
 using dotnet_registration_api.Helpers;
+using static dotnet_registration_api.Constants.ErrorMessages;
 
 namespace dotnet_registration_api.Services
 {
@@ -22,7 +23,7 @@ namespace dotnet_registration_api.Services
 
             if(user == null)
             {
-                throw new NotFoundException("This user does not exist");
+                throw new NotFoundException(NoUserErrorMessage);
             }
 
             return user;
@@ -31,14 +32,14 @@ namespace dotnet_registration_api.Services
         {
             if(login.Username == String.Empty || login.Password == String.Empty)
             {
-                throw new AppException("Enter username and password");
+                throw new AppException(EnterCredentialsErrorMessage);
             }
 
             var user = await _userRepository.GetUserByUsernameAndPassword(login.Username, login.Password);
 
             if(user == null)
             {
-                throw new NotFoundException("User with this username and password does not exist");
+                throw new NotFoundException(NoUserErrorMessage);
             }
 
             return user;
@@ -48,12 +49,12 @@ namespace dotnet_registration_api.Services
             var users = await _userRepository.GetAllUsers();
             if (register.Password == String.Empty)
             {
-                throw new AppException("Enter a password");
+                throw new AppException(WrongPasswordErrorMessage);
             }
 
             if(users.Any(u => u.Username == register.Username))
             {
-                throw new AppException("Username already taken");
+                throw new AppException(UsernameTakenErrorMessage);
             }
 
             User user = new()
@@ -78,7 +79,7 @@ namespace dotnet_registration_api.Services
 
             if(user.PasswordHash != HashHelper.HashPassword(updateRequest.OldPassword))
             {
-                throw new AppException("Wrong password");
+                throw new AppException(WrongPasswordErrorMessage);
             }
 
             var users = await _userRepository.GetAllUsers();
@@ -86,7 +87,7 @@ namespace dotnet_registration_api.Services
             if(user.Username != updateRequest.Username && 
                 users.Any(u => u.Username == updateRequest.Username))
             {
-                throw new AppException("Username already taken");
+                throw new AppException(UsernameTakenErrorMessage);
             }
 
             user.FirstName = updateRequest.FirstName;
@@ -101,7 +102,7 @@ namespace dotnet_registration_api.Services
             var user = await _userRepository.GetUserById(id);
             if(user == null)
             {
-                throw new NotFoundException("That user does not exist");
+                throw new NotFoundException(NoUserErrorMessage);
             }
             await _userRepository.DeleteUser(id);
         }

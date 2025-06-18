@@ -3,6 +3,8 @@ using dotnet_registration_api.Data.Models;
 using dotnet_registration_api.Helpers;
 using dotnet_registration_api.Services;
 using Microsoft.AspNetCore.Mvc;
+using static dotnet_registration_api.Constants.ErrorMessages;
+using static dotnet_registration_api.Constants.SuccessMessages;
 
 namespace dotnet_registration_api.Controllers
 {
@@ -75,7 +77,7 @@ namespace dotnet_registration_api.Controllers
             var user = await _userService.GetById(id);
             if (user == null)
             {
-                return NotFound("This user does not exist");
+                return NotFound(NoUserErrorMessage);
             }
 
             try
@@ -99,7 +101,7 @@ namespace dotnet_registration_api.Controllers
             try
             {
                 await _userService.Delete(id);
-                return Ok("User successfully deleted");
+                return Ok(DeletedUserSuccessMessage);
             }
             catch(NotFoundException ex)
             {
