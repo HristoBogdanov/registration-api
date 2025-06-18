@@ -14,15 +14,15 @@ namespace dotnet_registration_api.Data.Repositories
         {
             return await _context.Users.ToListAsync();
         }
-        public async Task<User> GetUserByUsername(string username)
+        public async Task<User?> GetUserByUsername(string username)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
         }
-        public async Task<User> GetUserByUsernameAndPassword(string username, string password)
+        public async Task<User?> GetUserByUsernameAndPassword(string username, string password)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Username == username && x.PasswordHash == password);
         }
-        public async Task<User> GetUserById(int id)
+        public async Task<User?> GetUserById(int id)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
         }
