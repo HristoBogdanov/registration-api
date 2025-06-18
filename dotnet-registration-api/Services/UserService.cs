@@ -61,23 +61,12 @@ namespace dotnet_registration_api.Services
                 throw new AppException("Username already taken");
             }
 
-            User newUser = new()
-            {
-                Id = id,
-                Username = updateRequest.Username,
-                FirstName = updateRequest.FirstName,
-                LastName = updateRequest.LastName,
-                PasswordHash = HashHelper.HashPassword(updateRequest.NewPassword)
-            };
+            user.FirstName = updateRequest.FirstName;
+            user.LastName = updateRequest.LastName;
+            user.Username = updateRequest.Username;
+            user.PasswordHash = HashHelper.HashPassword(updateRequest.NewPassword);
 
-            var result = await _userRepository.UpdateUser(newUser);
-
-            if(result == null)
-            {
-                throw new AppException("Username already taken");
-            }
-
-            return result;
+            return await _userRepository.UpdateUser(user);
         }
         public async Task Delete(int id)
         {
