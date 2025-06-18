@@ -19,15 +19,43 @@ namespace dotnet_registration_api.Services
         public async Task<User> GetById(int id)
         {
             var user = await _userRepository.GetUserById(id);
+
+            if(user == null)
+            {
+                throw new NotFoundException("This user does not exist");
+            }
+
             return user;
         }
         public async Task<User> Login(LoginRequest login)
         {
+            if(login.Username == String.Empty || login.Password == String.Empty)
+            {
+                throw new AppException("Enter username and password");
+            }
+
             var user = await _userRepository.GetUserByUsernameAndPassword(login.Username, login.Password);
+
+            if(user == null)
+            {
+                throw new NotFoundException("User with this username and password does not exist");
+            }
+
             return user;
         }
         public async Task<User> Register(RegisterRequest register)
         {
+            var users = await _userRepository.GetAllUsers();
+            if (register.Password == String.Empty)
+            {
+                throw new AppException("Enter a password");
+            }
+
+            if(users.Any(u => u.Username == register.Username))
+            {
+                throw new AppException("Username already taken");
+            }
+
             User user = new()
             {
                 Username = register.Username,
